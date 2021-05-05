@@ -1,38 +1,48 @@
 <!DOCTYPE html>
 <html>
-<style>
-body {
-  background-color: coral;
-}
-</style>
+
 <head>
     <title>Vaccine Variancy</title>
-	
-    <script type="text/javascript"
-	    src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    
+    <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
     <script type="text/javascript">
-        function initViz() {
-            var containerDiv = document.getElementById("vizContainer"),
-                url = "https://prod-useast-b.online.tableau.com/t/vaccinevariancy/views/Project/SiteDash?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link",
+        var vizList = ["https://prod-useast-b.online.tableau.com/t/vaccinevariancy/views/Project/SiteDash?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link","https://prod-useast-b.online.tableau.com/t/vaccinevariancy/views/HW3DB/Dashboard1?:embed=y&:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link"];
+        
+        var viz,
+            vizLen = vizList.length,
+            vizCount = 0;
+        
+        function createViz(vizPlusMinus) {
+            var vizDiv = document.getElementById("vizContainer"),
                 options = {
-                    hideTabs: true,
-                    onFirstInteractive: function () {
-                        console.log("Run this code when the viz has finished loading.");
-                    }
+                    hideTabs: true
                 };
 
-            var viz = new tableau.Viz(containerDiv, url, options);
-            // Create a viz object and embed it in the container div.
+            vizCount = vizCount + vizPlusMinus;
+            
+            if (vizCount >= vizLen) { 
+            // Keep the vizCount in the bounds of the array index.
+                vizCount = 0;
+            } else if (vizCount < 0) {
+                vizCount = vizLen - 1;
+            }
+            
+            if (viz) { // If a viz object exists, delete it.
+                viz.dispose();
+            }
+
+            var vizURL = vizList[vizCount];
+            viz = new tableau.Viz(vizDiv, vizURL, options); 
         }
     </script>
 </head>
 
-<h1>Vaccine Variancy</h1>
-<b>Welcome to the SQL Saviours Vaccine Variancy WebApp. Here you can access a variety of visualizations compiled via an embedded Tableau Dashboard using the Javascript API. Due
-to the Javascript API, all nodes in the Dashboard are interactive and will display more information.
-</>
-
-<body onload="initViz();">
-    <div id="vizContainer" style="width:1000px; height:750px;"></div>
+<body onload="createViz(0);">
+    <div id="vizContainer" style="width:800px; height:700px;"></div>
+    <div id="controls" style="padding:20px;">
+        <button style="width:100px;" onclick="javascript:createViz(-1);">Previous</button>
+        <button style="width:100px;" onclick="javascript:createViz(1);">Next</button>
+    </div>
 </body>
+
 </html>
